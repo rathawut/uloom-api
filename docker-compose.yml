@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  api:
+    build: .
+    volumes:
+      - app-volume:/app
+    ports:
+      - 4080:80
+
+volumes:
+  app-volume:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: $PWD/
