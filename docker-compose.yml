@@ -4,14 +4,20 @@ services:
   api:
     build: .
     volumes:
-      - app-volume:/app
+      - .:/app
+      - ./app/db-data
     ports:
       - 4080:80
+    depends_on: 
+      - db
 
-volumes:
-  app-volume:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: $PWD/
+  db:
+    image: timescale/timescaledb:1.7.0-pg12
+    restart: always
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: uloom
+      POSTGRES_PASSWORD: uloompassword
