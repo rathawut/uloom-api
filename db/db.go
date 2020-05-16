@@ -31,6 +31,7 @@ func New() *gorm.DB {
 	if err != nil {
 		fmt.Println("db error:", err)
 	}
+	db.SingularTable(true)
 	return db
 }
 
