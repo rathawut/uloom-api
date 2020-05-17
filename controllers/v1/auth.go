@@ -13,5 +13,9 @@ func (h *Handler) GetAuthFacebook(c echo.Context) error {
 
 // GetAuthFacebookCallback godoc
 func (h *Handler) GetAuthFacebookCallback(c echo.Context) error {
-	return c.JSON(http.StatusOK, c.QueryParams())
+	profile, err := h.FacebookProvider.GetProfile(c.QueryParam("code"))
+	if err != nil {
+		panic(err)
+	}
+	return c.JSON(http.StatusOK, profile)
 }

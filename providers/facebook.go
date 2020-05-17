@@ -1,7 +1,10 @@
 package providers
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"net/url"
 	"strings"
 
@@ -29,7 +32,6 @@ func NewFacebookProvider(clientID string, clientSecret string, redirectURL strin
 
 // BuildURL godoc
 func (p *FacebookProvider) BuildURL() string {
-	oauthStateString := "thisshouldbearandomstring"
 	authURL, err := url.Parse(p.Config.Endpoint.AuthURL)
 	if err != nil {
 		log.Fatal("Parse: ", err)
@@ -39,7 +41,27 @@ func (p *FacebookProvider) BuildURL() string {
 	parameters.Add("scope", strings.Join(p.Config.Scopes, " "))
 	parameters.Add("redirect_uri", p.Config.RedirectURL)
 	parameters.Add("response_type", "code")
-	parameters.Add("state", oauthStateString)
 	authURL.RawQuery = parameters.Encode()
 	return authURL.String()
+}
+
+// GetProfile godoc
+func (p *FacebookProvider) GetProfile(code string) (map[string]string, error) {
+	token, err := p.Config.Exchange(oauth2.NoContext, code)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := http.Get("https://graph.facebook.com/me?access_token=" + url.QueryEscape(token.AccessToken))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	response, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	m := make(map[string]string)
+	json.Unmarshal(response, &m)
+	m["picture"] = "http://graph.facebook.com/" + m["id"] + "/picture?type=square"
+	return m, nil
 }
