@@ -1,6 +1,7 @@
 package providers
 
 import (
+	"context"
 	"encoding/json"
 	"io/ioutil"
 	"log"
@@ -47,7 +48,7 @@ func (p *FacebookProvider) BuildURL() string {
 
 // GetProfile godoc
 func (p *FacebookProvider) GetProfile(code string) (map[string]string, error) {
-	token, err := p.Config.Exchange(oauth2.NoContext, code)
+	token, err := p.Config.Exchange(context.Background(), code)
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +62,9 @@ func (p *FacebookProvider) GetProfile(code string) (map[string]string, error) {
 		return nil, err
 	}
 	m := make(map[string]string)
-	json.Unmarshal(response, &m)
+	if err := json.Unmarshal(response, &m); err != nil {
+		return nil, err
+	}
 	m["picture"] = "http://graph.facebook.com/" + m["id"] + "/picture?type=square"
 	return m, nil
 }
