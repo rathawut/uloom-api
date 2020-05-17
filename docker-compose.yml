@@ -1,11 +1,11 @@
 version: "3.8"
 
 services:
-  api:
+  app:
     build: .
     volumes:
       - .:/app
-      - ./app/db-data
+      - /app/db-data
     ports:
       - 4080:80
     depends_on: 
