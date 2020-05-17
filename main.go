@@ -1,6 +1,7 @@
 package main
 
 import (
+	"uloom-api/config"
 	"uloom-api/db"
 
 	_ "github.com/jinzhu/gorm/dialects/postgres"
@@ -12,7 +13,8 @@ import (
 func main() {
 	e := echo.New()
 
-	d := db.New()
+	c := config.New()
+	d := db.New(c.DbHost, c.DbName, c.DbUser, c.DbPassword)
 	db.AutoMigrate(d)
 
 	v1Handler := v1.NewHandler()
