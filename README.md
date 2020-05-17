@@ -10,7 +10,7 @@
 
 Just clone this project.
 
-#### 3. Install golangci-lint
+#### 2. Install golangci-lint
 
 Check out https://github.com/golangci/golangci-lint, and install it.
 
