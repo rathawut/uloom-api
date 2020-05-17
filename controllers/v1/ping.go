@@ -6,15 +6,9 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// Message godoc
-type Message struct {
-	Message string
-}
-
-// PingPong godoc
-func (h *Handler) PingPong(c echo.Context) error {
-	message := &Message{
-		Message: "Pong!",
-	}
-	return c.JSON(http.StatusOK, message)
+// GetPing godoc
+func (h *Handler) GetPing(c echo.Context) error {
+	return c.JSON(http.StatusOK, map[string]string{
+		"message": "Pong!",
+	})
 }

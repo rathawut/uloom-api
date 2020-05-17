@@ -2,13 +2,14 @@ package main
 
 import (
 	"time"
-	"uloom-api/config"
-	"uloom-api/db"
 
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/labstack/echo/v4"
 
+	"uloom-api/config"
 	v1 "uloom-api/controllers/v1"
+	"uloom-api/db"
+	"uloom-api/providers"
 )
 
 func main() {
@@ -21,7 +22,9 @@ func main() {
 	}
 	db.AutoMigrate(d)
 
-	v1Handler := v1.NewHandler()
+	facebookProvider := providers.NewFacebookProvider(c.FacebookClientID, c.FacebookClientSecret, c.FacebookRedirectURL)
+
+	v1Handler := v1.NewHandler(facebookProvider)
 	v1Handler.Register(e.Group("/v1"))
 
 	e.Logger.Fatal(e.Start(":80"))

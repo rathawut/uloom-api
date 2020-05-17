@@ -1,19 +1,29 @@
 package v1
 
 import (
+	"uloom-api/providers"
+
 	"github.com/labstack/echo/v4"
 )
 
 // Handler godoc
-type Handler struct{}
+type Handler struct {
+	FacebookProvider *providers.FacebookProvider
+}
 
 // NewHandler godoc
-func NewHandler() *Handler {
-	return &Handler{}
+func NewHandler(facebookProvider *providers.FacebookProvider) *Handler {
+	return &Handler{
+		FacebookProvider: facebookProvider,
+	}
 }
 
 // Register godoc
 func (h *Handler) Register(g *echo.Group) {
-	ping := g.Group("/ping")
-	ping.GET("", h.PingPong)
+	pingGroup := g.Group("/ping")
+	pingGroup.GET("", h.GetPing)
+
+	authGroup := g.Group("/auth")
+	authGroup.GET("/facebook", h.GetAuthFacebook)
+	authGroup.GET("/facebook/callback", h.GetAuthFacebookCallback)
 }
